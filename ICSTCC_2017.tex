@@ -23,29 +23,56 @@
 % notice. 
 
 
-\mode<presentation>
-{
-  \usetheme{Warsaw}
-  % or ...
+%\mode<presentation>
+%{
+%  \usetheme{Warsaw}
+%  % or ...
+%
+%  \setbeamercovered{transparent}
+%  % or whatever (possibly just delete it)
+%}
+%
+%
+%\usepackage[english]{babel}
+%% or whatever
+%
+%\usepackage[latin1]{inputenc}
+%% or whatever
+%
+%\usepackage{times}
+%\usepackage[T1]{fontenc}
+%% Or whatever. Note that the encoding and the font should match. If T1
+%% does not look nice, try deleting the line with the fontenc.
 
-  \setbeamercovered{transparent}
-  % or whatever (possibly just delete it)
-}
 
+
+
+% Setup appearance:
+
+\usetheme{Darmstadt}
+\usefonttheme[onlylarge]{structurebold}
+\setbeamerfont*{frametitle}{size=\normalsize,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+
+
+% Standard packages
 
 \usepackage[english]{babel}
-% or whatever
-
 \usepackage[latin1]{inputenc}
-% or whatever
-
 \usepackage{times}
 \usepackage[T1]{fontenc}
-% Or whatever. Note that the encoding and the font should match. If T1
-% does not look nice, try deleting the line with the fontenc.
 
 
-\title[Short Paper Title] % (optional, use only with long paper titles)
+% Setup TikZ
+
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\tikzstyle{block}=[draw opacity=0.7,line width=1.4cm]
+
+
+
+
+\title[AUV control without linear velocity measurements] % (optional, use only with long paper titles)
 {Inertial-aided Homography-based Visual Servo Control of Autonomous Underwater Vehicles without Linear Velocity Measurements}
 
 %\subtitle
@@ -69,7 +96,7 @@
 % - Use the \inst command only if there are several affiliations.
 % - Keep it simple, no one is interested in your street address.
 
-\author[Author, Another] % (optional, use only with lots of authors)
+\author[Nguyen, Hua, Allibert and Hamel] % (optional, use only with lots of authors)
 {L.-H.~Nguyen \and M.-D.~Hua \and G.~Allibert \and T.~Hamel}
 \institute[Universities of Somewhere and Elsewhere] % (optional, but mostly needed)
 {
@@ -144,7 +171,7 @@
 % - If you omit details that are vital to the proof/implementation,
 %   just say so once. Everybody will be happy with that.
 
-\section{Motivation}
+\section{Introduction}
 
 %\subsection{The Basic Problem}
 
@@ -168,26 +195,51 @@
   \item
     Image-Based Visual Servo (IBVS)
   \end{itemize}
-\textbf{Issues:}
-\begin{itemize}
-	\item Pose reconstruction
-\end{itemize}
-\begin{figure}[ht!]
-	%\centering
-	\includegraphics[width=50mm]{Images/Notation.png}
-	\includegraphics[width=40mm]{Images/Homography.png}
+
+
+\begin{columns}[t]
+	\column{.6\textwidth}	
+	\begin{figure}[ht!]
+		%\centering
+		\includegraphics[width=55mm]{Images/Notation.png}	
+		\label{Notation}	
+	\end{figure}	
 	
-	\label{Notation}	
-\end{figure}
+	\column{.4\textwidth}
+	\begin{exampleblock}{Issues}		
+		\begin{itemize}
+			\item Pose reconstruction 
+		\end{itemize}
+	\end{exampleblock}
+	
+	\begin{exampleblock}{Homography \\(monocular camera)}
+	\begin{figure}[ht!]	
+		\includegraphics[width=40mm]{Images/Homography.png}		
+		\label{Homography}	
+	\end{figure}
+	\end{exampleblock}
+\end{columns}
 
 \end{frame}
 
 \begin{frame}{Kinematic IBVS control}
-	\textit{S. Benhimane and E. Malis, 2007:}\\ \textbf{Homography-based 2D visual tracking and servoing}
+\begin{block}{\textit{S. Benhimane and E. Malis, 2007:}}
+\textbf{Homography-based 2D visual tracking and servoing}
 \begin{itemize}
-	\item Kinematic control scheme
 	\item No homography decomposition 
-\end{itemize}
+	\item Kinematic control scheme
+\end{itemize}	
+\end{block}
+
+
+	
+
+
+\begin{block}{Lemma 1}
+	\begin{figure}[ht!]	
+			...
+	\end{figure}
+\end{block}
 
  
 \end{frame}
@@ -206,37 +258,48 @@
 %\subsection{Previous Work}
 
 \begin{frame}{Dynamic IBVS control}
-\textit{S. Krupinski, G. Allibert, M.-D. Hua and T. Hamel, 2017:}\\ \textbf{An inertial-aided homography based visual servoing control approach for (almost) fully actuated autonomous underwater vehicles}
-\begin{itemize}
-	\item Dynamic control scheme with cascade inner-outer loop control architecture
-\item Linear velocity measured by DVL 
-\end{itemize}
+
+\begin{block}{\textit{S. Krupinski, G. Allibert, M.-D. Hua and T. Hamel, 2017:}}
+	\textbf{An inertial-aided homography based visual servoing control approach for (almost) fully actuated autonomous underwater vehicles}
+	\begin{itemize}
+		\item Cascade inner-outer loop control architecture
+		\item DVL measured by Doppler Velocity Log (DVL)
+	\end{itemize}
+\end{block}
+
+\begin{figure}
+	\includegraphics[width = 90mm]{Images/Block_diagram_1.png}
+\end{figure}
 
 \end{frame}
 
 \begin{frame}{Novelty}
-Continuation of our previous work. \\
-Linear velocity measurement is not required!
 
-Doppler Velocity Log (DVL) is not needed. \\
-DVL:
-\begin{itemize}
-	\item High price
-	\item High weight
-	\item Violate maximum slope-threshold of DVLs in close proximity operation
-\end{itemize}
+\begin{columns}[t]
+	\column{.5\textwidth}
+	\begin{exampleblock}{Novelty}
+	Linear velocity measurement is not required!
+	\end{exampleblock}
+	
 
+	
+	\column{.5\textwidth}
+	\begin{exampleblock}{Practical value}
+	No need DVL: \\
+	\begin{itemize}
+		\item High price
+		\item High weight
+		\item Violate maximum slope-threshold of DVLs in close proximity operation
+	\end{itemize}
+	\end{exampleblock}
+\end{columns}
 \end{frame}
 
 
-\section{Our Contribution}
 
-\subsection{System modeling}
+\section{System modeling}
 
-\begin{frame}{Dynamical model}
-\end{frame}
-
-\begin{frame}{Model for control design}
+\begin{frame}{Dynamical model \& Model for control design}
 Simplifications:
 \begin{itemize}
 	\item Class of compact-shape AUV
@@ -250,33 +313,44 @@ Simplified control model:
 
 
 
-\subsection{Control design}
+\section{Control design}
 
 \begin{frame}{Inner-outer loop control architecture}
-Block diagram of the proposed HBVS controller
+%Block diagram of the proposed HBVS controller
 \begin{figure}
-	
+	\includegraphics[width = 90mm]{Images/Block_diagram_2.png}
 \end{figure}
+
 
 \begin{itemize}
 	\item Inner loop:
 	\begin{itemize}
-		\item Reference angular velocity $$ \Omega_r \stackrel{\triangle}{=}  k_g \mathbf{e}_3 \times \mathbf{R}^{T} \mathbf{e}_3 + \omega_{3r} \mathbf{e}_3$$
-		\item Control torque $\Gamma_C$ ensures  $ \Omega \longrightarrow \Omega_r $ 
+	
+		\item $\Gamma_C$ ensures  $ \Omega \longrightarrow $ $ \Omega_r \stackrel{\triangle}{=}  k_g \mathbf{e}_3 \times \mathbf{R}^{T} \mathbf{e}_3 + \omega_{3r} \mathbf{e}_3$ 
 	\end{itemize} 
 	\item Outer loop:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Make Titles Informative.}
+\begin{frame}{Outer-loop control design}
+\begin{itemize}
+	\item Without sea currents
+	
+	\item With sea currents, integral action
+\end{itemize}
+
 \end{frame}
 
-\begin{frame}{Make Titles Informative.}
+\begin{frame}{Inner-loop control design}
+\end{frame}
+
+\section{Simulation results}
+\begin{frame}{Simulation results}
 \end{frame}
 
 
 
-\section*{Conclusion}
+\section{Conclusion}
 
 \begin{frame}{Conclusion}
 
