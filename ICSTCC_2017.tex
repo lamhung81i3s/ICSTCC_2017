@@ -48,12 +48,14 @@
 
 
 % Setup appearance:
-
+\mode<presentation>
+{
 \usetheme{Darmstadt}
 \usefonttheme[onlylarge]{structurebold}
 \setbeamerfont*{frametitle}{size=\normalsize,series=\bfseries}
 \setbeamertemplate{navigation symbols}{}
-
+\usefonttheme{professionalfonts}
+}
 
 % Standard packages
 
@@ -61,6 +63,9 @@
 \usepackage[latin1]{inputenc}
 \usepackage{times}
 \usepackage[T1]{fontenc}
+
+%
+%\usefonttheme[onlymath]{serif}
 
 
 % Setup TikZ
@@ -171,11 +176,11 @@
 % - If you omit details that are vital to the proof/implementation,
 %   just say so once. Everybody will be happy with that.
 
-\section{Introduction}
+\section{Motivation}
 
 %\subsection{The Basic Problem}
 
-\begin{frame}{Visual Servo Control}
+\begin{frame}{Why Visual Servo Control?}
   % - A title should summarize the slide in an understandable fashion
   %   for anyone how does not follow everything on the slide itself.
 %	\begin{figure}[ht!]
@@ -188,132 +193,190 @@
 
 
 
-\textbf{Methods:}
-  \begin{itemize}
-  \item
-    Postiotion-Based Visual Servo (PBVS) 
-  \item
-    Image-Based Visual Servo (IBVS)
-  \end{itemize}
 
-
-\begin{columns}[t]
-	\column{.6\textwidth}	
-	\begin{figure}[ht!]
-		%\centering
-		\includegraphics[width=55mm]{Images/Notation.png}	
-		\label{Notation}	
-	\end{figure}	
+	\begin{columns}[t]
+		\column{.5\textwidth}	
+		\begin{exampleblock}{Underwater issues:}		
+			\begin{itemize}
+				\item No GPS 
+			\end{itemize}
+		\end{exampleblock}
+		\begin{exampleblock}{Camera}		
+			\begin{itemize}
+				\item Operation closed to structures
+				\item Rich of informations
+			\end{itemize}
+		\end{exampleblock}
 	
-	\column{.4\textwidth}
-	\begin{exampleblock}{Issues}		
+		
+		\column{.5\textwidth}		
+		\begin{exampleblock}{Stereo camera}
+			\begin{itemize}
+				\item Calculation power required
+			\end{itemize}
+		\end{exampleblock}
+		\begin{exampleblock}{Monocular camera}
+			\begin{itemize}
+				\item More generic
+			\end{itemize}
+		\end{exampleblock}
+	\end{columns}
+
+\end{frame}
+
+\begin{frame}{Linear velocity measurement}
+	\begin{columns}[t]
+		\column{.5\textwidth}
+		\begin{exampleblock}{DVL issues:}
+			\begin{itemize}
+				\item High price
+				\item High weight
+				\item Violate maximum slope-threshold of DVLs in close proximity operation
+			\end{itemize}
+		\end{exampleblock}
+		\column{.5\textwidth}
+		
+		
+	\end{columns} 
+\end{frame}
+
+\begin{frame}{System modeling}
+	\begin{columns}
+		\column[content...]{.5\textwidth}
+		\begin{figure}
+			\includegraphics[width = 50mm]{Images/Notation.png}
+		\end{figure}
+		\column[placement]{.6\textwidth}
+		\begin{block}{Equations of motion:}
+			\scriptsize
+			\begin{equation*}\label{eq:system2}
+			\begin{array}{rl}
+			\dot{\mathbf{p}} & =  \mathbf{R} \mathbf{V} \\
+			\dot{\mathbf{R}} & =  \mathbf{R} \mathbf{\Omega}_\times \\
+			\!\!\dot{\mathbf{P}}_h &= \mathbf{P}_h \times \mathbf{\Omega} +\mathbf{F}_c + \mathbf{F}_{gb} + \mathbf{F}_d  \\
+			\!\!\dot{\mathbf{\Pi}}_h &=  \mathbf{\Pi}_h \!\times\! \mathbf{\mathbf{\Omega}} + \mathbf{P}_h \!\times \!\mathbf{V}_h  +\mathbf{\Gamma}_c + \mathbf{\Gamma}_g + \mathbf{\Gamma}_d \!\!\vspace{-0.2cm}
+			\end{array}
+			\end{equation*} \vspace{-0.3cm}
+			where: \\
+			\begin{equation*}
+			\begin{array}{rl}
+			\mathbf{P}_h & = \mathbf{M}\mathbf{V}_h + \mathbf{D}^{\!\top} \mathbf{\Omega}\\[1ex]
+			\mathbf{\Pi}_h & = \mathbf{J} \mathbf{\Omega} + \mathbf{D}\mathbf{V}_h \\
+			\mathbf{F}_{gb}  &\triangleq (m g - F_b) \mathbf{R}^{\!\top} \mathbf{e}_3\\
+			\mathbf{\Gamma}_g  &\triangleq mgl\mathbf{e}_{3}\! \times \!\mathbf{R}^{\!\top} \mathbf{e}_3\\
+			\mathbf{F}_d(\mathbf{V}_h) & = - (\mathbf{D}_{V\!l}   +|\mathbf{V}_h|\mathbf{D}_{V\!q} )\mathbf{V}_h  \\
+			\mathbf{\Gamma}_d(\mathbf{\Omega})& =  - (\mathbf{D}_{\Omega l}  + |\mathbf{\Omega}|\mathbf{D}_{\Omega q} )\mathbf{\Omega}
+			\end{array}
+			\end{equation*}
+		\end{block}
+	\end{columns}
+
+\end{frame}
+
+
+\begin{frame}{Model for control design}
+\begin{columns}
+	\column[content...]{0.4\textwidth}
+	\begin{block}{Assumptions: Ignore}
 		\begin{itemize}
-			\item Pose reconstruction 
+			\scriptsize
+			\item Coupling matrix $\mathbf{D}$
+			\begin{itemize}
+				\scriptsize
+				\item Compact-shape AUVs
+				\item Small distance BG
+			\end{itemize}
+			\item "Munk moment" $\mathbf{P}_h \!\times \!\mathbf{V}_h$
+		\end{itemize}		
+	\end{block}
+	\begin{block}{Compact-shape AUV}
+		\begin{figure}
+			\includegraphics[width = 1.0\textwidth]{Images/Bluerov.png}
+		\end{figure}
+	\end{block}
+	\column[content...]{0.68\textwidth}
+	\begin{block}{Model for control design}
+		\scriptsize
+		\[
+		\begin{array}{rl}
+		\dot{\mathbf{p}} & =  \mathbf{R} \mathbf{V} \label{eq:kinematicsPos}\\
+		\dot{\mathbf{R}} & =  \mathbf{R} \mathbf{\Omega}_\times \\
+		\mathbf{M}\dot{\mathbf{V}} &= (\mathbf{M}\mathbf{V}) \!\times\!\mathbf{\Omega} + \mathbf{F}_c + \mathbf{F}_{gb} + \mathbf{F}_d(\mathbf{V}) +\mathbf{\Delta}_F  \\
+		\mathbf{J}\dot{\mathbf{\Omega}} &=  (\mathbf{J}\mathbf{\Omega}) \!\times\! \mathbf{\mathbf{\Omega}} + \mathbf{\Gamma}_c + \mathbf{\Gamma}_g +  \mathbf{\Delta}_{\Gamma}
+		\end{array} 
+		\]
+		
+		
+		\noindent with the ``disturbance'' terms: 
+		\[
+		\begin{array}{rl}
+		\mathbf{\Delta}_F =\!\!\!\!\!\!& -(\mathbf{M}\mathbf{V}_f)_\times \mathbf{\Omega} -\mathbf{M} \mathbf{\Omega}_\times \mathbf{V}_f + (\mathbf{D}^\top \mathbf{\Omega})_\times \mathbf{\Omega} -\mathbf{D}^\top \dot{\mathbf{\Omega}}\\
+		&+ \mathbf{F}_d(\mathbf{V}_h) - \mathbf{F}_d(\mathbf{V}) \\
+		\mathbf{\Delta}_{\Gamma} =\!\!\!\!\!\! &(\mathbf{DV}_h)\!\times \!\mathbf{\Omega} + \mathbf{P}_h \!\times \!\mathbf{V}_h  - \mathbf{D}\dot{\mathbf{V}}_h  + \mathbf{\Gamma}_d\vspace{-0.1cm}
+		\end{array} %\vspace{-0.1cm}
+		\]
+	\end{block}
+\end{columns}
+	
+\end{frame}
+
+
+\begin{frame}{Homography}
+\begin{columns}
+	\column[content...]{0.4\textwidth}
+	\begin{block}{Homography}
+		\begin{equation*}\label{def:homo}
+		\mathbf{H} = \mathbf{R}^{\!\top} - \frac{1}{d^\star} \mathbf{R}^{\!\top} \mathbf{p}_C \mathbf{n}^{\star\!\top} 
+		\end{equation*}
+	\end{block}
+	\column[content...]{0.5\textwidth}
+	\begin{block}{Pose decomposition}
+		\begin{itemize}
+			\item No need!
 		\end{itemize}
-	\end{exampleblock}
+	\end{block}
+
+	\begin{block}{Visual errors}
+		\[
+		\begin{array}{rl}
+			\mathbf{e}_p &\triangleq (\mathbf{I}_3 - \mathbf{H})\mathbf{m}^\star\\
+			\mathbf{e}_\Theta &\triangleq \mathrm{vex}(\mathbf{H}^\top - \mathbf{H}) 
+		\end{array}
+		\]		
+	\end{block}
+	\begin{block}{Control objective}
+		\[
+		\begin{array}{rl}
+		(\mathbf{R}, \mathbf{p}_c) & \longrightarrow (\mathbf{I}_3, \mathbf{0})\\
+		\mathbf{H} & \longrightarrow \mathbf{I}_3\\
+		(\mathbf{e}_p, \mathbf{e}_\Theta) & \longrightarrow (\mathbf{0}, \mathbf{0})
+		\end{array}
+		\]	
+	\end{block}
 	
-	\begin{exampleblock}{Homography \\(monocular camera)}
-	\begin{figure}[ht!]	
-		\includegraphics[width=40mm]{Images/Homography.png}		
-		\label{Homography}	
-	\end{figure}
-	\end{exampleblock}
 \end{columns}
 
 \end{frame}
 
-\begin{frame}{Kinematic IBVS control}
-\begin{block}{\textit{S. Benhimane and E. Malis, 2007:}}
-\textbf{Homography-based 2D visual tracking and servoing}
-\begin{itemize}
-	\item No homography decomposition 
-	\item Kinematic control scheme
-\end{itemize}	
-\end{block}
-
-
-	
-
-
-\begin{block}{Lemma 1}
-	\begin{figure}[ht!]	
-			...
-	\end{figure}
-\end{block}
-
- 
-\end{frame}
-
-%\begin{frame}{Stereo camera and full pose reconstruction}
-%pose = position + orientation
-%
-%\textbf{Difficulties:}
-%\begin{itemize}
-%	\item Short stereo base comparing with long distance to scene 
-%\end{itemize}
-%
-%\end{frame}
-
-
-%\subsection{Previous Work}
-
-\begin{frame}{Dynamic IBVS control}
-
-\begin{block}{\textit{S. Krupinski, G. Allibert, M.-D. Hua and T. Hamel, 2017:}}
-	\textbf{An inertial-aided homography based visual servoing control approach for (almost) fully actuated autonomous underwater vehicles}
-	\begin{itemize}
-		\item Cascade inner-outer loop control architecture
-		\item DVL measured by Doppler Velocity Log (DVL)
-	\end{itemize}
-\end{block}
-
-\begin{figure}
-	\includegraphics[width = 90mm]{Images/Block_diagram_1.png}
-\end{figure}
-
-\end{frame}
-
-\begin{frame}{Novelty}
-
-\begin{columns}[t]
-	\column{.5\textwidth}
-	\begin{exampleblock}{Novelty}
-	Linear velocity measurement is not required!
-	\end{exampleblock}
-	
-
-	
-	\column{.5\textwidth}
-	\begin{exampleblock}{Practical value}
-	No need DVL: \\
-	\begin{itemize}
-		\item High price
-		\item High weight
-		\item Violate maximum slope-threshold of DVLs in close proximity operation
-	\end{itemize}
-	\end{exampleblock}
-\end{columns}
+\begin{frame}{Kinematic control}
+	\begin{block}{S.Benhimane and E.Malis, 2007}
+		Homography-based 2D visual tracking and servoing
+	\end{block}
+	\begin{columns}
+		\column[placement]{0.5\textwidth}
+		\begin{block}{Lemma 1}
+			The kinematic control law
+			\begin{equation*}\label{maliscontrol}
+			\mathbf{V}_{C} = -k_p \mathbf{e}_p\,,\quad \mathbf{\Omega} = -k_\Theta \mathbf{e}_\Theta  
+			\end{equation*}
+			with $k_p, k_\Theta>0$, ensures the local exponential stability of $\mathbf{H}  \longrightarrow \mathbf{I}_3$.
+		\end{block}
+		\column[placement]{0.5\textwidth}
+	\end{columns}
 \end{frame}
 
 
 
-\section{System modeling}
-
-\begin{frame}{Dynamical model \& Model for control design}
-Simplifications:
-\begin{itemize}
-	\item Class of compact-shape AUV
-	\item "Munk moment" is neglected
-	\item Terms involving Vf are regrouped and considered as disturbance
-\end{itemize}
-Simplified control model:
-
-
-\end{frame}
-
-
-
-\section{Control design}
 
 \begin{frame}{Inner-outer loop control architecture}
 %Block diagram of the proposed HBVS controller
@@ -326,7 +389,7 @@ Simplified control model:
 	\item Inner loop:
 	\begin{itemize}
 	
-		\item $\Gamma_C$ ensures  $ \Omega \longrightarrow $ $ \Omega_r \stackrel{\triangle}{=}  k_g \mathbf{e}_3 \times \mathbf{R}^{T} \mathbf{e}_3 + \omega_{3r} \mathbf{e}_3$ 
+		\item $\mathbf{\Gamma}_C$ ensures  $ \mathbf{\Omega} \longrightarrow $ $ \mathbf{\Omega}_r \stackrel{\triangle}{=}  k_g \mathbf{e}_3 \times \mathbf{R}^{T} \mathbf{e}_3 + \omega_{3r} \mathbf{e}_3$ 
 	\end{itemize} 
 	\item Outer loop:
 \end{itemize}
