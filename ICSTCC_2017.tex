@@ -196,49 +196,57 @@
 
 	\begin{columns}[t]
 		\column{.5\textwidth}	
-		\begin{exampleblock}{Underwater issues:}		
+		\begin{block}{Global acoustic positioning system issues:}		
 			\begin{itemize}
-				\item No GPS 
+				\item Unusable
+				\item Insufficiently precise 
 			\end{itemize}
-		\end{exampleblock}
-		\begin{exampleblock}{Camera}		
+		\end{block}
+		\begin{block}{Camera}		
 			\begin{itemize}
-				\item Operation closed to structures
+				\item Allow operation closed to structures
 				\item Rich of informations
 			\end{itemize}
-		\end{exampleblock}
+		\end{block}
 	
 		
 		\column{.5\textwidth}		
-		\begin{exampleblock}{Stereo camera}
+		\begin{block}{Stereo camera}
 			\begin{itemize}
-				\item Calculation power required
+				\item High processing power required
+				\item Ineffective when far from scene
 			\end{itemize}
-		\end{exampleblock}
-		\begin{exampleblock}{Monocular camera}
+		\end{block}
+		\begin{block}{Monocular camera}
 			\begin{itemize}
-				\item More generic
+				\item Impossible pose reconstruction   
 			\end{itemize}
-		\end{exampleblock}
+		\end{block}
 	\end{columns}
 
 \end{frame}
 
-\begin{frame}{Linear velocity measurement}
+\begin{frame}{Linear velocity measurement issues}
 	\begin{columns}[t]
-		\column{.5\textwidth}
-		\begin{exampleblock}{DVL issues:}
+		\column{.3\textwidth}
+		\begin{block}{DVL issues:}
 			\begin{itemize}
-				\item High price
+				\item High price ($>$ 10K US\$)
 				\item High weight
+				%\item Big dimensions 
 				\item Violate maximum slope-threshold of DVLs in close proximity operation
 			\end{itemize}
-		\end{exampleblock}
-		\column{.5\textwidth}
-		
+		\end{block}
+		\column{.8\textwidth}
+		\begin{figure}
+			\includegraphics[width = 80mm]{Images/DVL_prices.png}\\ \vspace{0.2cm}
+			 DVL comparison, \tiny from Terzja van de Kuil, 2016
+		\end{figure}
 		
 	\end{columns} 
 \end{frame}
+
+\section{System modeling \& Control design}
 
 \begin{frame}{System modeling}
 	\begin{columns}
@@ -264,8 +272,8 @@
 			\mathbf{\Pi}_h & = \mathbf{J} \mathbf{\Omega} + \mathbf{D}\mathbf{V}_h \\
 			\mathbf{F}_{gb}  &\triangleq (m g - F_b) \mathbf{R}^{\!\top} \mathbf{e}_3\\
 			\mathbf{\Gamma}_g  &\triangleq mgl\mathbf{e}_{3}\! \times \!\mathbf{R}^{\!\top} \mathbf{e}_3\\
-			\mathbf{F}_d(\mathbf{V}_h) & = - (\mathbf{D}_{V\!l}   +|\mathbf{V}_h|\mathbf{D}_{V\!q} )\mathbf{V}_h  \\
-			\mathbf{\Gamma}_d(\mathbf{\Omega})& =  - (\mathbf{D}_{\Omega l}  + |\mathbf{\Omega}|\mathbf{D}_{\Omega q} )\mathbf{\Omega}
+			\mathbf{F}_d(\mathbf{V}_h) & \triangleq - (\mathbf{D}_{V\!l}   +|\mathbf{V}_h|\mathbf{D}_{V\!q} )\mathbf{V}_h  \\
+			\mathbf{\Gamma}_d(\mathbf{\Omega})& \triangleq  - (\mathbf{D}_{\Omega l}  + |\mathbf{\Omega}|\mathbf{D}_{\Omega q} )\mathbf{\Omega}
 			\end{array}
 			\end{equation*}
 		\end{block}
@@ -277,7 +285,7 @@
 \begin{frame}{Model for control design}
 \begin{columns}
 	\column[content...]{0.4\textwidth}
-	\begin{block}{Assumptions: Ignore}
+	\begin{block}{Simplifications:}
 		\begin{itemize}
 			\scriptsize
 			\item Coupling matrix $\mathbf{D}$
@@ -285,13 +293,15 @@
 				\scriptsize
 				\item Compact-shape AUVs
 				\item Small distance BG
+				\item Light weight AUVs
 			\end{itemize}
 			\item "Munk moment" $\mathbf{P}_h \!\times \!\mathbf{V}_h$
 		\end{itemize}		
 	\end{block}
 	\begin{block}{Compact-shape AUV}
 		\begin{figure}
-			\includegraphics[width = 1.0\textwidth]{Images/Bluerov.png}
+			\includegraphics[width = 1.0\textwidth]{Images/Bluerov.png}\\
+			\tiny Source: www.bluerobotics.com
 		\end{figure}
 	\end{block}
 	\column[content...]{0.68\textwidth}
@@ -310,9 +320,9 @@
 		\noindent with the ``disturbance'' terms: 
 		\[
 		\begin{array}{rl}
-		\mathbf{\Delta}_F =\!\!\!\!\!\!& -(\mathbf{M}\mathbf{V}_f)_\times \mathbf{\Omega} -\mathbf{M} \mathbf{\Omega}_\times \mathbf{V}_f + (\mathbf{D}^\top \mathbf{\Omega})_\times \mathbf{\Omega} -\mathbf{D}^\top \dot{\mathbf{\Omega}}\\
+		\mathbf{\Delta}_F \triangleq\!\!\!\!\!\!& -(\mathbf{M}\mathbf{V}_f)_\times \mathbf{\Omega} -\mathbf{M} \mathbf{\Omega}_\times \mathbf{V}_f + (\mathbf{D}^\top \mathbf{\Omega})_\times \mathbf{\Omega} -\mathbf{D}^\top \dot{\mathbf{\Omega}}\\
 		&+ \mathbf{F}_d(\mathbf{V}_h) - \mathbf{F}_d(\mathbf{V}) \\
-		\mathbf{\Delta}_{\Gamma} =\!\!\!\!\!\! &(\mathbf{DV}_h)\!\times \!\mathbf{\Omega} + \mathbf{P}_h \!\times \!\mathbf{V}_h  - \mathbf{D}\dot{\mathbf{V}}_h  + \mathbf{\Gamma}_d\vspace{-0.1cm}
+		\mathbf{\Delta}_{\Gamma} \triangleq\!\!\!\!\!\! &(\mathbf{DV}_h)\!\times \!\mathbf{\Omega} + \mathbf{P}_h \!\times \!\mathbf{V}_h  - \mathbf{D}\dot{\mathbf{V}}_h  + \mathbf{\Gamma}_d\vspace{-0.1cm}
 		\end{array} %\vspace{-0.1cm}
 		\]
 	\end{block}
@@ -321,24 +331,25 @@
 \end{frame}
 
 
-\begin{frame}{Homography}
+\begin{frame}{Homography-based visual control}
 \begin{columns}
 	\column[content...]{0.4\textwidth}
 	\begin{figure}
 		\includegraphics[width = 50mm]{Images/Notation.png}
 	\end{figure}\vspace{-0.5cm}
-	
+	$$\mathbf{\chi}^\star = \mathbf{p}_c + \mathbf{R}\mathbf{\chi} \Rightarrow \mathbf{\chi} = \mathbf{H}\mathbf{\chi}^\star$$ \vspace{-0.8cm}	
 	\begin{block}{Homography}
-		\begin{equation*}\label{def:homo}
-		\mathbf{H} = \mathbf{R}^{\!\top} - \frac{1}{d^\star} \mathbf{R}^{\!\top} \mathbf{p}_C \mathbf{n}^{\star\!\top} 
+		\vspace{-0.3cm}
+		\begin{equation*}
+		\mathbf{H} \triangleq \mathbf{R}^{\!\top} - \frac{1}{d^\star} \mathbf{R}^{\!\top} \mathbf{p}_C \mathbf{n}^{\star\!\top} 
 		\end{equation*}
 	\end{block}
 	\column[content...]{0.5\textwidth}
-	\begin{block}{Pose decomposition}
-		\begin{itemize}
-			\item No need!
-		\end{itemize}
-	\end{block}
+%	\begin{block}{Pose decomposition}
+%		\begin{itemize}
+%			\item No need!
+%		\end{itemize}
+%	\end{block}
 
 	\begin{block}{Visual errors}
 		\[
@@ -347,6 +358,14 @@
 			\mathbf{e}_\Theta &\triangleq \mathrm{vex}(\mathbf{H}^\top - \mathbf{H}) 
 		\end{array}
 		\]		
+		with $\mathbf{m}^\star \in S^2$ satisfying: \vspace{-0.3cm}
+		\[
+		\begin{array}{ll} 
+			|\mathbf{m}^\star| &= 1 \\
+			\mathbf{n}^{\star \top} \mathbf{m}^\star &> 0
+		\end{array}
+		\]
+		 	
 	\end{block}
 	\begin{block}{Control objective}
 		\[
@@ -362,7 +381,7 @@
 
 \end{frame}
 
-\begin{frame}{Kinematic control}
+\begin{frame}{Kinematic control, recalled}
 	\begin{block}{S.Benhimane and E.Malis, 2007}
 		Homography-based 2D visual tracking and servoing
 	\end{block}
@@ -378,13 +397,13 @@
 			with $k_p, k_\Theta>0$, ensures the local exponential stability of $\mathbf{H}  \longrightarrow \mathbf{I}_3$.
 		\end{block}
 		\column[placement]{0.5\textwidth}
-		\begin{block}{Advantages}
+		\begin{block}{Advantage}
 			\begin{itemize}
-				\item No need pose decomposition				
+				\item No need homography decomposition				
 			\end{itemize}
 		\end{block}
 		
-		\begin{block}{Disadvantages}
+		\begin{block}{Issues}
 			\begin{itemize}
 				\item Only kinematic control
 				\item $\dot{\mathbf{e}}_p$ unknown
@@ -407,62 +426,117 @@
 	\item Inner loop:
 	\begin{itemize}
 	
-		\item $\mathbf{\Gamma}_C$ ensures  $ \mathbf{\Omega} \longrightarrow $ $ \mathbf{\Omega}_r \stackrel{\triangle}{=}  k_g \mathbf{e}_3 \times \mathbf{R}^{T} \mathbf{e}_3 + \omega_{3r} \mathbf{e}_3$ 
+		\item $\mathbf{\Gamma}_C$ ensures  
+		$(\mathbf{\Omega}, \mathbf{R}^\top \mathbf{e}_3) \longrightarrow (\mathbf{\Omega}_r, \mathbf{e}_3)$\\
+		where: $ \mathbf{\Omega}_r \stackrel{\triangle}{=}  k_g \mathbf{e}_3 \times \mathbf{R}^{T} \mathbf{e}_3 + \omega_{3r} \mathbf{e}_3$ 
 	\end{itemize} 
 	\item Outer loop:
 		\begin{itemize}
-			\item $\mathbf{F}_c$ ensures $\mathbf{e}_p \longrightarrow \mathbf{0}$
-			\item $\mathbf{F}_c$ together with $\omega_{3r}$ ensure $\mathbf{H} \longrightarrow \mathbf{I}_3$
+			\item $\mathbf{F}_c$ ensures $(\mathbf{e}_p, \mathbf{V}) \longrightarrow (\mathbf{0},\mathbf{0})$
+			\item $\mathbf{F}_c$ together with $\mathbf{\Omega}_{r}$ ensure $\mathbf{H} \longrightarrow \mathbf{I}_3$		
 		\end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Outer-loop control design}
-%	\begin{columns}
-%		\column[content...]{0.5\textwidth}
-%		\begin{block}{Proposition 1}
-%			content...
-%		\end{block}
-%		\column[placement]{0.5\textwidth}
-%		\begin{block}{Proposition 3}
-%			content...
-%		\end{block}
-%	\end{columns}
-	
-	Consider the dynamics of $\mathbf{e}_p$ given by \eqref{dot:epZD}, with the disturbance term $\boldsymbol{\varepsilon}(t)$ remaining bounded for all time and converging exponentially to zero. Consider the translational dynamics \eqref{eq:momentumEqs} with $\mathbf{\Delta}_F \equiv \mathbf{0}$.
-	Introduce the augmented system \vspace{-0.1cm}
-	\begin{equation}\label{dot:ephatZD}
-	\dot {\hat{\mathbf{e}}}_p = -\mathbf{\Omega}\times  \hat{\mathbf{e}}_p   -\mathbf{K}_1 \hat{\mathbf{e}}_p + \mathbf{K}_1 {\mathbf{e}}_p, \quad  \hat{\mathbf{e}}_p(0) \in \mathbb{R}^3\vspace{-0.1cm}
-	\end{equation}
-	with $\mathbf{K}_1\in \mathbb{R}^{3\times 3}$ positive matrix. Apply the control force \vspace{-0.1cm}
-	\begin{equation}\label{u:force}
-	\mathbf{F}_c \!=\! \bar m \mathbf{M}^{-1} \big(\mathrm{sat}^{\eta_1}(k_2 \tilde{\mathbf{e}}_p)  - \mathrm{sat}^{\eta_2}( k_3 {\mathbf{e}}_p) \big) - \mathbf{F}_{gb} \vspace{-0.1cm}
-	\end{equation}
-	with positive numbers $\bar m$, $k_2$, $k_3$, $\eta_1$, $\eta_2$, and $\tilde {\mathbf{e}}_p \triangleq \hat{\mathbf{e}}_p - \mathbf{e}_p$, and $\mathrm{sat}^{(\cdot)}(\cdot)$ the classical saturation function.
-	Assume that $\mathbf{\Omega}$ remains bounded for all time. Then, the equilibrium $(\mathbf{e}_p,{\hat{\mathbf{e}}}_p, \mathbf{V})=(\mathbf{0},\mathbf{0},\mathbf{0})$ is globally asymptotically stable (GAS). Moreover, $\mathbf{F}_c$ remains bounded by \vspace{-0.1cm}
-	\begin{equation}\label{bound:force}
-	|\mathbf{F}_c(t)| \leq \bar{m} \underline{\lambda}_{\mathbf{M}}^{-1}(\eta_1 + \eta_2) + |mg - F_b| \vspace{-0.1cm}
-	\end{equation}
-	with $\underline{\lambda}_{\mathbf{M}}$ the smallest eigenvalue of $\mathbf{M}$.	
+%\begin{frame}{Outer-loop control design}
+%%	\begin{columns}
+%%		\column[content...]{0.5\textwidth}
+%%		\begin{block}{Proposition 1}
+%%			content...
+%%		\end{block}
+%%		\column[placement]{0.5\textwidth}
+%%		\begin{block}{Proposition 3}
+%%			content...
+%%		\end{block}
+%%	\end{columns}
+%	
+%	Consider the dynamics of $\mathbf{e}_p$:$$\dot {\mathbf{e}}_p = -\mathbf{\Omega}\times  \mathbf{e}_p   + a^\star \mathbf{V} + \boldsymbol{\varepsilon}(t), \boldsymbol{\varepsilon}(t) \text{ bounded and}  \longrightarrow 0$$
+%	
+%	 Consider the translational dynamics with $\mathbf{\Delta}_F \equiv \mathbf{0}$.
+%	Introduce the augmented system \vspace{-0.1cm}
+%	\begin{equation}\label{dot:ephatZD}
+%	\dot {\hat{\mathbf{e}}}_p = -\mathbf{\Omega}\times  \hat{\mathbf{e}}_p   -\mathbf{K}_1 \hat{\mathbf{e}}_p + \mathbf{K}_1 {\mathbf{e}}_p, \quad  \hat{\mathbf{e}}_p(0) \in \mathbb{R}^3\vspace{-0.1cm}
+%	\end{equation}
+%	with $\mathbf{K}_1\in \mathbb{R}^{3\times 3}$ positive matrix. Apply the control force \vspace{-0.1cm}
+%	\begin{equation}\label{u:force}
+%	\mathbf{F}_c \!=\! \bar m \mathbf{M}^{-1} \big(\mathrm{sat}^{\eta_1}(k_2 \tilde{\mathbf{e}}_p)  - \mathrm{sat}^{\eta_2}( k_3 {\mathbf{e}}_p) \big) - \mathbf{F}_{gb} \vspace{-0.1cm}
+%	\end{equation}
+%	with positive numbers $\bar m$, $k_2$, $k_3$, $\eta_1$, $\eta_2$, and $\tilde {\mathbf{e}}_p \triangleq \hat{\mathbf{e}}_p - \mathbf{e}_p$, and $\mathrm{sat}^{(\cdot)}(\cdot)$ the classical saturation function.
+%	Assume that $\mathbf{\Omega}$ remains bounded for all time. Then, the equilibrium $(\mathbf{e}_p,{\hat{\mathbf{e}}}_p, \mathbf{V})=(\mathbf{0},\mathbf{0},\mathbf{0})$ is globally asymptotically stable (GAS). Moreover, $\mathbf{F}_c$ remains bounded by \vspace{-0.1cm}
+%	\begin{equation}\label{bound:force}
+%	|\mathbf{F}_c(t)| \leq \bar{m} \underline{\lambda}_{\mathbf{M}}^{-1}(\eta_1 + \eta_2) + |mg - F_b| \vspace{-0.1cm}
+%	\end{equation}
+%	with $\underline{\lambda}_{\mathbf{M}}$ the smallest eigenvalue of $\mathbf{M}$.	
+%
+%\end{frame}
 
+\begin{frame}{Outer-loop control design, $\mathbf{F}_c$}
+	\begin{block}{Proposition 1, $\mathbf{v}_f = \mathbf{0}$}
+		\begin{itemize}
+			\item There exist: \\
+			\begin{itemize}
+				\item $\dot {\mathbf{e}}_p = -\mathbf{\Omega}\times  \mathbf{e}_p   + \frac{(\mathbf{n}^{\star\top}\mathbf{m}^\star)}{d^\star} \mathbf{V} + \boldsymbol{\varepsilon}(t), \boldsymbol{\varepsilon}(t) \text{ bounded and}  \longrightarrow 0$
+				\item 
+				$\mathbf{M}\dot{\mathbf{V}} = (\mathbf{M}\mathbf{V}) \!\times\!\mathbf{\Omega} + \mathbf{F}_c + \mathbf{F}_{gb} + \mathbf{F}_d(\mathbf{V}), \mathbf{\Delta}_F = 0 $ 
+			\end{itemize}
+			\item Introduce: \\
+			\begin{itemize}
+				\item $\dot {\hat{\mathbf{e}}}_p = -\mathbf{\Omega}\times  \hat{\mathbf{e}}_p   -\mathbf{K}_1 \hat{\mathbf{e}}_p + \mathbf{K}_1 {\mathbf{e}}_p, \quad  \hat{\mathbf{e}}_p(0) \in \mathbb{R}^3$
+				\item
+%				$\mathbf{F}_c \!=\! \bar m \mathbf{M}^{-1} \big(\mathrm{sat}^{\eta_1}(k_2 \tilde{\mathbf{e}}_p)  - \mathrm{sat}^{\eta_2}( k_3 {\mathbf{e}}_p) \big) - \mathbf{F}_{gb}$ 
+				$\mathbf{F}_c \!=\! \bar m \mathbf{M}^{-1} \big(k_2(\hat{\mathbf{e}}_p - \mathbf{e}_p)  -  k_3 {\mathbf{e}}_p \big) - \mathbf{F}_{gb}$ 
+			\end{itemize}
+			\item Conclusion:\\ $(\mathbf{e}_p,{\hat{\mathbf{e}}}_p, \mathbf{V})=(\mathbf{0},\mathbf{0},\mathbf{0})$  globally asymptotically stable (GAS)			 
+		\end{itemize}		
+	\end{block}	
+\end{frame}
+
+\begin{frame}{Outer-loop control design, $\omega_{3r}$}
+	\begin{block}{Proposition 3, $\mathbf{v}_f = \mathbf{0}$:}
+		\begin{itemize}
+			\item If:
+			\begin{itemize}
+				\item $\mathbf{\Gamma}_c$ ensures almost-GAS of the equilibrium $(\mathbf{\Omega}, \mathbf{R}^\top \mathbf{e}_3) = (\mathbf{\Omega}_r, \mathbf{e}_3)$, with $\mathbf{\Omega}_r$ defined by $$\mathbf{\Omega}_r \triangleq k_g \mathbf{e}_3 \times \mathbf{R}^\top \mathbf{e}_3 + \omega_{3r} \mathbf{e}_3, k_g >0  $$
+				$$\dot{\omega}_{3r} = -k_{\Theta 2} \omega_{3r} - k_{\Theta 1} \mathrm{sat}^{\Delta_\Theta}(h_{1,2})$$
+				 $$\quad \omega_{3r}(0) \in \mathbb{R}, k_{\Theta 1}, k_{\Theta 2}, \Delta_\Theta, h_{1,2} > 0$$
+				\item $\mathbf{F}_c$ given by Proposition 1
+			\end{itemize}
+			\item Then: $\mathbf{H} = \mathbf{I}_3$ is almost-GAS.
+		\end{itemize}
+	\end{block}	
 \end{frame}
 
 \begin{frame}{Inner-loop control design}
-	Since the system is fully-actuated and both $\mathbf{\Omega}$ and $\mathbf{R}^\top \mathbf{e}_3$ are measured, it is not too difficult to design an effective inner-loop torque control that ensures  $(\mathbf{\Omega}, \mathbf{R}^\top \mathbf{e}_3) \longrightarrow (\mathbf{\Omega}_r, \mathbf{e}_3)$
+	%Since the rotation dynamics is fully-actuated and both $\mathbf{\Omega}$ and $\mathbf{R}^\top \mathbf{e}_3$ are measured, it is not too difficult to design an effective inner-loop torque control that ensures  $(\mathbf{\Omega}, \mathbf{R}^\top \mathbf{e}_3) \longrightarrow (\mathbf{\Omega}_r, \mathbf{e}_3)$
+	
+	\begin{itemize}
+		\item Fully-actuated rotation dynamics
+		\item Both $\mathbf{\Omega}$ and $\mathbf{R}^\top \mathbf{e}_3$ are measured \\
+		$\Rightarrow$ NOT to difficult to design $\mathbf{\Gamma}_c$ ensures $(\mathbf{\Omega}, \mathbf{R}^\top \mathbf{e}_3) \longrightarrow (\mathbf{\Omega}_r, \mathbf{e}_3)$ 
+	\end{itemize}
 \end{frame}
 
 \begin{frame}{Other solved problems}
-Practical issues:\\
-- Imprecise model parameters\\
-- Current leads to "Munk moment" cannot be ignored\\
-requires that control laws must be robust  <- integral action\\
-Need to estimate disturbance $\mathbf{\Delta}_{\Gamma}$
+%Practical issues:\\
+%- Imprecise model parameters\\
+%- Current leads to "Munk moment" cannot be ignored\\
+%requires that control laws must be robust  <- integral action\\
+%Need to estimate disturbance $\mathbf{\Delta}_{\Gamma}$
+
+	\begin{itemize}
+		\item Practical issues: \\
+		- Imprecise model parameters\\
+		- "Munk moment" cannot be ignored due to current $\mathbf{v}_f \neq \mathbf{0}$
+		\item Solutions:\\
+		- Add integrator\\
+		- Estimate disturbance $\mathbf{\Delta}_{\Gamma}$		
+	\end{itemize}
  
 \end{frame}
 
 
 \section{Simulation results}
-\begin{frame}{Simulation results}
+\begin{frame}{Simulation results, \tiny$\mathbf{p}_C(0) = [-2, -1.5, -1 ]^{\top} (m)$, $\mathbf{R}(0) = \mathbf{R}_{\{\frac{\pi}{18},-\frac{\pi}{18},\pi\}}$, $\mathbf{V}(0) = \mathbf{\Omega}(0) = \mathbf{0}$}
 	\begin{columns}
 		\column[content...]{0.55\textwidth}
 		\begin{block}{Current $\mathbf{V}_f = \mathbf{0}$}
@@ -496,7 +570,7 @@ Need to estimate disturbance $\mathbf{\Delta}_{\Gamma}$
   \item
     Without relying on linear velocity measurement
   \item
-    Locally exponential stability, robustness to unmodeled dynamics and disturbance.
+    Ensures locally exponential stability, with robustness to unmodeled dynamics and disturbance.
   \end{itemize}
   
   % The following outlook is optional.
